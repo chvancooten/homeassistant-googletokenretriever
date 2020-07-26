@@ -8,6 +8,7 @@ Based on great work by [Rithvik Vibhu](https://rithvikvibhu.github.io/GHLocalApi
 
 - A linux machine with support for cronjobs (does not have to be the Home Assistant host)
 - [Get_tokens.py](https://gist.githubusercontent.com/rithvikvibhu/952f83ea656c6782fbd0f1645059055d/raw/00c724829a2786f97fc5251b5aaf998af9a93806/get_tokens.py)
+    - The script needs to be configured etiher with your Google credentials (username / (application) password), or with a master key override set. The latter can be done after running the script once.
 - The latest release of [grpcurl](https://github.com/fullstorydev/grpcurl/releases)
 - Google Foyer [proto files](https://drive.google.com/drive/folders/1RvnN3y-G23pd2SWHmfV_7sef8QU5GNF4) (preserve the folder structure)
 
