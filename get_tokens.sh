@@ -17,7 +17,9 @@ accessToken=$(/usr/bin/python3 $getTokenScriptPath | grep 'Access token:' | cut 
 
 # Grab and parse the list of per-device local auth tokens
 echo "Grabbing list of local authentication tokens..."
-localAuthTokenList=$($grpCurlPath -H "authorization: Bearer $accessToken" -import-path $protoPath -proto $protoPath/google/internal/home/foyer/v1.proto googlehomefoyer-pa.googleapis.com:443 google.internal.home.foyer.v1.StructuresService/GetHomeGraph | jq '.home.devices[] | {deviceName, localAuthToken}')
+localAuthTokenList=$($grpCurlPath -H "authorization: Bearer $accessToken" -import-path $protoPath \ 
+    -proto $protoPath/google/internal/home/foyer/v1.proto googlehomefoyer-pa.googleapis.com:443 \
+    google.internal.home.foyer.v1.StructuresService/GetHomeGraph | jq '.home.devices[] | {deviceName, localAuthToken}')
 
 # Prepare list of tokens from result
 stamp=$(/bin/date)
