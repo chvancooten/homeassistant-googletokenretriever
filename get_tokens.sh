@@ -13,13 +13,11 @@ healthCheckUrl=https://hc-ping.com/your-hc-token
 
 # Grab Google access token
 echo "Grabbing access token..."
-accessToken=$(/usr/bin/python3 $getTokenScriptPath | grep 'Access token:' | cut -d' ' -f4)
+accessToken=$(/usr/bin/python3.6 $getTokenScriptPath | grep 'Access token:' | cut -d' ' -f4)
 
 # Grab and parse the list of per-device local auth tokens
 echo "Grabbing list of local authentication tokens..."
-localAuthTokenList=$($grpCurlPath -H "authorization: Bearer $accessToken" -import-path $protoPath \ 
-    -proto $protoPath/google/internal/home/foyer/v1.proto googlehomefoyer-pa.googleapis.com:443 \
-    google.internal.home.foyer.v1.StructuresService/GetHomeGraph | jq '.home.devices[] | {deviceName, localAuthToken}')
+localAuthTokenList=$($grpCurlPath -H "authorization: Bearer $accessToken" -import-path $protoPath -proto $protoPath/google/internal/home/foyer/v1.proto googlehomefoyer-pa.googleapis.com:443 google.internal.home.foyer.v1.StructuresService/GetHomeGraph | jq '.home.devices[] | {deviceName, localAuthToken}')
 
 # Prepare list of tokens from result
 stamp=$(/bin/date)
@@ -39,12 +37,12 @@ jsonObj="{\"state\": \"Tokening\", \"attributes\": {$entities}}"
   -d "$jsonObj" \
   "$hassApi/states/input_text.google_tokens" > /dev/null
 
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ] && [ ! -z "$localAuthToken" ]; then
     echo "Home assistant keys updated."
 
     if [ "$healthCheck" = true ] ; then
     /usr/bin/curl -s -m 10 --retry 5 "$healthCheckUrl" > /dev/null
     fi
 else
-    echo "Something went wrong, check script config."
+    echo "Something went wrong, check your config."
 fi
